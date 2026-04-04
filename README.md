@@ -1,102 +1,218 @@
-# 📌 1. Project Description
+---
 
-## 🧠 Vision-Language Models for Medical Report Understanding
+# 🧠 Reinforcement Learning-Enhanced Medical Reasoning and Visual Grounding
 
-This project explores the application of **Vision-Language Models (VLMs)** in the medical domain, specifically for **radiology image understanding and report generation**.
+## 📖 Overview
 
-### 📖 Overview
+This project explores advanced **Vision-Language Models (VLMs)** for medical applications, focusing on **medical report generation** and **Visual Question Answering (VQA)** with an emphasis on **clinical reasoning and visual grounding**.
 
-Medical imaging (e.g., chest X-rays) plays a crucial role in clinical diagnosis. However, interpreting these images requires significant expertise and time. This project aims to develop a multimodal system that can:
+Unlike traditional approaches based solely on Supervised Fine-Tuning (SFT), this project integrates **Reinforcement Learning (RL)** to improve reasoning capabilities and generalization across diverse medical scenarios.
 
-* Understand medical images
-* Generate structured textual descriptions (reports)
-* Answer clinical questions related to the image
-
-By leveraging recent advances in **multimodal deep learning**, the system combines **computer vision** and **natural language processing** to assist in medical analysis.
+The system is designed not only to generate accurate diagnoses but also to provide **interpretable outputs** by linking textual findings with **localized visual evidence (bounding boxes)**.
 
 ---
 
-### 🎯 Objectives
+## 🎯 Objectives
 
-* Build a system that maps **medical images → textual reports**
-* Explore **Vision-Language Models (VLMs)** such as:
-
-  * Encoder-decoder architectures
-  * Pretrained multimodal transformers
-* Evaluate model performance on:
-
-  * Text generation (e.g., BLEU, ROUGE)
-  * Question answering accuracy (optional extension)
+* Develop a multimodal system for **medical image understanding**
+* Apply **Reinforcement Learning (RL)** to enhance reasoning beyond SFT
+* Enable **visual grounding** of medical findings
+* Improve **generalization and robustness** in clinical tasks
+* Balance **accuracy and explainability** using structured reasoning
 
 ---
 
-### ⚙️ System Capabilities
+## ⚙️ Core Approach
 
-The final system is expected to support:
+### 🔹 Vision-Language Modeling
 
-#### 1. Report Generation
+* Joint processing of **medical images + text**
+* Base model: Multimodal transformer (e.g., Qwen2-VL or similar)
 
-* Input: Medical image (e.g., chest X-ray)
-* Output: Generated radiology-style report
+### 🔹 Reinforcement Learning
 
-#### 2. Visual Question Answering (Optional)
+* Framework: **Group Relative Policy Optimization (GRPO)**
+* Uses **rule-based rewards** instead of expensive human annotations
 
-* Input: Image + natural language question
-* Output: Answer based on image content
+### 🔹 Think-After Protocol
 
----
-
-### 🚀 Motivation
-
-* Reduce workload for radiologists
-* Improve efficiency in medical workflows
-* Provide automated assistance in low-resource settings
-* Demonstrate the effectiveness of multimodal AI in healthcare
+* Model predicts answer first, then explains reasoning
+* Helps reduce hallucination and overly verbose reasoning chains
 
 ---
 
-### 🧪 Methodology
+## 🚀 System Capabilities
 
-The project follows a standard NLP + ML pipeline:
+### 1. Clinical Diagnostics
 
-1. **Data preprocessing**
+* Input: Medical images (X-ray, CT, MRI)
+* Output: Structured medical report
 
-   * Image normalization
-   * Text cleaning and tokenization
+### 2. Visual Grounding
 
-2. **Feature representation**
+* Detect and localize abnormalities
+* Output bounding boxes: `[x1, y1, x2, y2]`
 
-   * Image embeddings (CNN / Vision Transformer)
-   * Text embeddings (BERT / domain-specific models)
+### 3. Multimodal Reasoning
 
-3. **Modeling**
+* Step-by-step reasoning using structured tags:
 
-   * Vision-Language Models (e.g., BLIP, LLaVA, or similar)
-   * Fine-tuning on medical datasets
-
-4. **Evaluation**
-
-   * BLEU / ROUGE for report generation
-   * Accuracy for VQA
+  * `<think>`: reasoning process
+  * `<answer>`: final prediction
 
 ---
 
-### 📊 Expected Challenges
+## 🧪 Example Output
 
-* Domain-specific medical terminology
-* Limited labeled data
-* Noisy or inconsistent reports
-* Ethical considerations in medical AI
+```json
+<think>
+The image shows a PA chest X-ray. The cardiac silhouette appears enlarged. No pleural effusion observed.
+</think>
+
+<answer>
+{
+  "findings": "mild cardiomegaly",
+  "bbox_2d": [x1, y1, x2, y2]
+}
+```
 
 ---
 
-### 👥 Team Members
+## 💡 Motivation
 
-| Name             | Student ID |
-| ---------------- | ---------- |
-| Le Anh Thu       | V202503040 |
-| Luu Duc Toan     | V202502963 |
-| Tran Trung Duc   | V202401788 |
-| Nguyen Van Cuong | V202502961 |
+### Problems with Existing Systems:
+
+* Over-reliance on **Supervised Fine-Tuning (SFT)**
+* Prone to **shortcut learning**
+* Lack of **reasoning capability**
+* Limited **interpretability**
+
+### Why Reinforcement Learning?
+
+* Encourages exploration of reasoning strategies
+* Improves performance in **out-of-distribution scenarios**
+* Reduces dependence on expensive expert annotations
+
+### Key Insight:
+
+The model can develop an **“aha moment”**—learning to reason about abnormalities before identifying them, leading to more accurate and reliable predictions.
+
+---
+
+## 📊 Expected Contributions
+
+* A **3B parameter model** enhanced with RL that rivals larger systems
+* Improved **clinical reasoning and robustness**
+* A framework combining:
+
+  * Accuracy
+  * Explainability
+  * Visual interpretability
+
+---
+
+## 📁 Dataset
+
+We use publicly available medical datasets:
+
+* **MIMIC-CXR**
+* **IU X-Ray Dataset**
+* **OmniMedVQA** (for evaluation)
+
+### Why These Datasets?
+
+* Provide **image-text pairs**
+* Enable **rule-based RL rewards**
+* Support multiple clinical tasks:
+
+  * Anatomy identification
+  * Disease diagnosis
+  * Lesion grading
+  * Modality recognition
+  * Biological attributes
+
+---
+
+## ⚠️ Challenges
+
+* Complex medical terminology
+* Limited annotated reasoning data
+* Risk of **black-box behavior**
+* Ensuring **clinical reliability and interpretability**
+
+---
+
+## 🧪 Methodology
+
+### 1. Data Processing
+
+* Normalize medical images
+* Format prompts using `<think>/<answer>` structure
+
+### 2. Modeling
+
+* Train multimodal VLM
+* Apply RL with GRPO
+
+### 3. Evaluation Metrics
+
+* **BLEU / ROUGE** → report quality
+* **IoU (Intersection over Union)** → bounding box accuracy
+* **Greedy Precision** → detect reward hacking
+
+---
+
+## 🛡️ System Improvements
+
+* Prevents **reward hacking** using **odLength reward**
+* Supports **cross-modality generalization**
+* Produces **interpretable and verifiable outputs**
+
+---
+
+## 👥 Team Members
+
+| Name             | Student ID | Responsibilities                                         |
+| ---------------- | ---------- | -------------------------------------------------------- |
+| Le Anh Thu       | V202503040 | System development, demo interface, visualization        |
+| Luu Duc Toan     | V202502963 | Feature engineering, embeddings, VLM integration         |
+| Tran Trung Duc   | V202401788 | Model training, experimentation, evaluation              |
+| Nguyen Van Cuong | V202502961 | Data preprocessing, dataset analysis, report structuring |
+
+---
+
+## 🔄 Project Workflow
+
+* **Data pipeline:** Image normalization + structured prompt formatting
+* **Modeling:** RL-based training on a 3B model
+* **Evaluation:** Multi-metric validation (IoU, BLEU, ROUGE)
+* **System:** Interactive demo with reasoning + visual outputs
+
+---
+
+## 📂 Repository Structure
+
+```bash
+.
+├── data/
+├── src/
+├── notebooks/
+├── proposal.md
+├── README.md
+```
+
+---
+
+## 🔗 Repository Link
+
+👉 [https://github.com/cnvcuong/VinUni_Spring26_NLP_COMP5040_FinalProject_Group1](https://github.com/cnvcuong/VinUni_Spring26_NLP_COMP5040_FinalProject_Group1)
+
+---
+
+## 📌 Notes
+
+* This project is part of **COMP5040 – Natural Language Processing**
+* The repository is maintained as a **collaborative academic project**
+* All datasets are used under appropriate licenses and for research purposes only
 
 ---
