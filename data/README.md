@@ -1,109 +1,156 @@
-## 📁 Dataset Description
+---
 
-This folder contains the dataset used for the project:
-**Vision-Language modeling for medical image understanding**
+# 📁 Dataset Description
+
+## 🧠 Overview
+
+This directory contains datasets used for training and evaluating a **Vision-Language Model (VLM)** enhanced with **Reinforcement Learning (RL)** for medical reasoning and visual grounding.
+
+The dataset supports multiple multimodal tasks, including:
+
+* Medical report generation
+* Visual Question Answering (VQA)
+* Visual grounding (abnormality localization with bounding boxes)
 
 ---
 
-### 📦 Dataset Source
+## 📦 Data Sources
 
-We plan to use a publicly available dataset such as:
+We utilize publicly available medical datasets:
 
-* **MIMIC-CXR Dataset**
-  or
-* **IU X-Ray Dataset**
+### 1. MIMIC-CXR
 
-*(Final dataset selection will be confirmed in later phases.)*
+* Large-scale chest X-ray dataset
+* Paired with radiology reports
+* Widely used in clinical AI research
+
+### 2. IU X-Ray Dataset
+
+* Smaller but well-structured dataset
+* Includes annotated reports
+* Suitable for prototyping and validation
+
+### 3. OmniMedVQA (for evaluation)
+
+* Multi-task benchmark dataset
+* Covers diverse clinical reasoning tasks
 
 ---
 
-### 📊 Dataset Structure
+## 📊 Data Structure
 
-The dataset consists of paired multimodal data:
+Each sample consists of:
 
-#### 1. Images
+### 🔹 Input
 
-* Format: `.jpg` or `.png`
-* Type: Chest X-ray images
-* Resolution: Varies
+* Medical image (X-ray / CT / MRI)
+* Optional clinical question
 
-#### 2. Text Reports
+### 🔹 Output
 
-* Format: `.txt` or structured JSON
-* Content:
+* Structured textual report
+* Visual grounding annotations (if available)
 
-  * Findings
-  * Impression
-  * Clinical notes
+---
 
-#### Example:
+### 📄 Example Format
 
-```id="yq9d4v"
+```json id="u1j5gs"
 {
-  "image": "image_001.png",
-  "report": "No acute cardiopulmonary abnormality."
+  "image": "images/img_001.png",
+  "question": "Is there cardiomegaly?",
+  "report": "The cardiac silhouette is enlarged, consistent with mild cardiomegaly.",
+  "bbox_2d": [x1, y1, x2, y2]
 }
 ```
 
 ---
 
-### 🧱 Directory Structure (Example)
+## 🧱 Directory Structure
 
-```id="b6b8sq"
+```bash id="0d9ylp"
 /data
-│── images/
-│   ├── img1.png
-│   ├── img2.png
-│── reports/
-│   ├── report1.txt
-│   ├── report2.txt
-│── metadata.csv
+├── raw/              # Original datasets (not uploaded if large)
+├── processed/        # Cleaned and formatted data
+├── sample/           # Small subset for testing/demo
+├── annotations/      # Bounding boxes / labels (if available)
+├── README.md
 ```
 
 ---
 
-### 📐 Data Size (Estimated)
+## 🎯 Why This Dataset?
 
-* Images: ~5,000 – 100,000 samples (depending on dataset used)
-* Reports: 1 per image
-* Total size: Several GB
+* Provides **image-text alignment** for multimodal learning
+* Enables **rule-based reward design** for RL training
+* Supports diverse clinical tasks:
 
----
-
-### 🧠 Why This Dataset?
-
-* Contains aligned **image-text pairs**
-* Suitable for:
-
-  * Image captioning
-  * Report generation
-  * Multimodal learning
-* Widely used in medical AI research
+  * Anatomy identification
+  * Disease diagnosis
+  * Lesion grading
+  * Modality recognition
+  * Biological attribute prediction
 
 ---
 
-### ⚠️ Known Challenges
+## ⚠️ Challenges
 
-* Medical language is complex and domain-specific
-* Reports may vary in style and length
-* Possible class imbalance (rare diseases)
-* Some data may contain noise or missing values
-
----
-
-### 🔒 Ethical Considerations
-
-* Data is anonymized (no personal identifiers)
-* Must be used strictly for research purposes
-* Compliance with dataset license is required
+* Specialized medical terminology
+* Limited bounding box annotations
+* Data imbalance across disease classes
+* Variation in report style and quality
 
 ---
 
-### 🛠️ Preprocessing Plan
+## 🛠️ Preprocessing Pipeline
 
-* Image resizing and normalization
-* Tokenization of text reports
-* Removal of irrelevant metadata
-* Train/validation/test split
+### 1. Image Processing
+
+* Resize and normalize images
+* Convert to standard format
+* Optional augmentation
+
+### 2. Text Processing
+
+* Clean and normalize reports
+* Tokenization
+* Format into structured prompts:
+
+  * `<think>` (reasoning)
+  * `<answer>` (final output)
+
+### 3. Data Formatting
+
+* Convert to multimodal input format
+* Align images with reports and annotations
+* Split into train / validation / test sets
+
+---
+
+## 🧪 Role in Reinforcement Learning
+
+The dataset is used to define **reward functions** for RL training:
+
+* **Report Quality Reward** → BLEU / ROUGE
+* **Localization Reward** → IoU (bounding boxes)
+* **Anti-Reward Hacking** → Greedy Precision, odLength penalty
+
+These rewards guide the model toward **accurate and interpretable reasoning**.
+
+---
+
+## 🔒 Ethical Considerations
+
+* All datasets are **anonymized**
+* Used strictly for **research and educational purposes**
+* Must comply with dataset licenses
+
+---
+
+## 📌 Notes
+
+* Large datasets (e.g., MIMIC-CXR) are **not stored directly in this repository**
+* Only sample data or metadata may be included
+* Full datasets should be downloaded via external links or scripts
 
 ---
