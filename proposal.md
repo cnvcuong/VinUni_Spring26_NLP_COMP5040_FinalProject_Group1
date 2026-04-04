@@ -1,81 +1,62 @@
 # NLP Project Proposal
 
-**Course:** COMP4020 / COMP5040 – Natural Language Processing
+**Course:** COMP5040 – Natural Language Processing
 
-**Project Title:** *Vision-Language Models for Medical Report Understanding and Assistance*
+**Project Title:** *Reinforcement Learning-Enhanced Medical Reasoning and Visual Grounding*
 
 ---
 
 ## 1. What is the project about?
 
-This project focuses on applying **Vision-Language Models (VLMs)** to a medical NLP task.
+This project focuses on applying **Vision-Language Models (VLMs)** to critical medical NLP tasks, specifically **medical report generation** and **Visual Question Answering (VQA)**. Unlike traditional models that rely solely on Supervised Fine-Tuning (SFT), this system implements **Reinforcement Learning (RL)** to enhance clinical reasoning and generalization.
 
-* **NLP Task:** Medical report generation and visual question answering (VQA)
-* **Approach:** Combine image understanding and natural language processing using VLMs
-* **Domain:** Healthcare (radiology / clinical diagnostics)
+* **Approach:** We will utilize the **Group Relative Policy Optimization (GRPO)** framework to train a model that performs joint reasoning over images and text without requiring expensive expert-annotated rationales.
+* **Core Tasks:**
+  - **Clinical Diagnostics**: Generating descriptive reports for modalities like X-rays, CT, and MRI.
+  - **Visual Grounding**: Identifying and **highlighting specific medical abnormalities** via bounding box coordinates (e.g., [x1, y1, x2, y2]) within the model’s response.
 
-The system will take **medical images (e.g., X-rays)** and optionally text queries, and generate:
-
-* Descriptive medical reports, or
-* Answers to clinical questions about the image
-
-This project aligns with real-world applications such as assisting radiologists in diagnosis and reducing workload.
+This project aims to reduce radiologist workload by providing a system that doesn't just memorize shortcuts but develops a **generalizable reasoning pattern** applicable across different clinical scenarios.
 
 ---
 
 ## 2. Why this project?
 
-Medical imaging generates large volumes of data that require expert interpretation.
-
-### Problem:
-
-* Manual analysis of medical images is **time-consuming and expensive**
-* There is a shortage of trained radiologists in many regions
-* Existing systems often treat vision and language separately
+**Problem**: Current medical VLMs primarily rely on SFT, which often leads to "shortcut learning" - where the model memorizes superficial patterns in training data rather than learning true medical logic. Furthermore, there is a severe **scarcity of high-quality Chain-of-Thought (CoT) annotations** for medical data, as expert rationales are expensive to curate.
 
 ### Motivation:
 
-* VLMs enable **joint reasoning over images and text**
-* Automating report generation can improve **efficiency and consistency**
-* Clinical question answering can support **decision-making**
+* **Beyond SFT**: RL allows the model to explore diverse reasoning strategies through rule-based rewards, making it more robust in out-of-domain tasks.
+* **The "Aha Moment"**: By training on visual grounding tasks, the model can develop an "aha moment" where it spontaneously reasons about the presence of an object before identifying it, reducing false positives in diagnosis.
+* **Clinical Reliability**: Specialized medical tasks like lesion grading or anatomy identification require **multi-step analysis** (e.g., morphology and context), which RL-driven models handle more efficiently than general-purpose models.
+
 
 ### Expected Contributions:
 
-* A system that can interpret medical images and produce structured outputs
-* Insights into how multimodal models perform in medical contexts
-* Evaluation of challenges such as domain-specific terminology and data limitations
+* A system that outperforms significantly larger models by using efficient RL-driven adaptation on a smaller 3B base.
+* A framework that balances **accuracy and explainability** using the **"Think-After" protocol**, where the model predicts the answer first and rationalizes later to avoid lengthy, hallucinated reasoning chains.
 
 ---
 
 ## 3. What is the final product?
 
-The final product will be a **multimodal NLP system** with the following capabilities:
+The final product is a multimodal system capable of high-stakes medical decision support with an emphasis on **visual interpretability**.
 
 ### Core Features:
 
-* Input: Medical image (e.g., chest X-ray)
-* Output:
+* **Input**: Multi-modal medical images (Chest X-ray, CT, MRI, etc.) and clinical queries.
+* **Output**:
+  - **Grounded Medical Reports**: Textual findings accompanied by visual highlights **(bounding boxes)** of the regions of interest.
+  - **Structured Reasoning**: A dedicated <think> process that provides a step-by-step clinical rationale for the generated diagnosis.
 
-  * Generated medical report (text generation), OR
-  * Answers to user queries (VQA)
+### Example Output:
 
-### Example:
-
-* Input: Chest X-ray
-* Output:
-
-  > “Findings suggest mild cardiomegaly with no acute infiltrates.”
+* `<think> The image shows a PA view of a chest X-ray. I observe an enlarged cardiac silhouette. There is no evidence of pleural effusion. </think>`
+* `<answer> {"findings": "mild cardiomegaly", "bbox_2d": [x1, y1, x2, y2]} </answer>`
 
 ### Improvements over existing processes:
 
-* Reduces manual workload
-* Speeds up report generation
-* Provides consistent descriptions
-* Enables interactive querying of medical images
-
-Optional:
-
-* Simple demo interface (e.g., web UI or notebook interface)
+* **Prevents Reward Hacking**: Uses an **odLength reward** to ensure the model only highlights relevant findings and does not over-predict boxes to "cheat" the accuracy metrics.
+* **Cross-Modality Stability**: Reliable performance across eight different medical imaging modalities.
 
 ---
 
@@ -83,37 +64,17 @@ Optional:
 
 ### Dataset:
 
-We plan to use a publicly available medical dataset such as:
-
-* **MIMIC-CXR** or
-* **IU X-Ray dataset**
-
-### Description:
-
-* Contains:
-
-  * Medical images (X-rays)
-  * Associated radiology reports (text)
-* Structure:
-
-  * Image + report pairs
-  * May include sections (Findings, Impression)
-
-### Domain:
-
-* Clinical radiology
+**Dataset**: We will use publicly available radiology datasets like **MIMIC-CXR** or the **IU X-Ray** dataset, supplemented by benchmarks like **OmniMedVQA** for multi-task evaluation
 
 ### Suitability:
 
-* Ideal for **image-to-text generation** and **multimodal learning**
-* Widely used benchmark dataset in medical AI research
+* **Benchmarking**: These datasets provide the "deterministic ground-truth" (diagnostic labels and report text) required for rule-based RL rewards.
+* **Task Diversity**: They allow for training across five distinct clinical types: Anatomy Identification, Disease Diagnosis, Lesion Grading, Modality Recognition, and Biological Attributes.
 
 ### Challenges:
 
-* Medical terminology is highly specialized
-* Data may be noisy or inconsistent
-* Possible class imbalance (rare conditions)
-* Ethical considerations and data privacy
+* **Domain-Specific Terminology**: We will address specialized medical language by initializing from a strong base model (like Qwen2-VL) and using RL to align its latent world knowledge with clinical requirements.
+* **Interpretability**: To overcome the "black-box" nature of medical AI, we will implement Think-After strategies to ensure the reasoning traces are clinically sound and verifiable by human researchers.
 
 ---
 
@@ -128,35 +89,17 @@ We plan to use a publicly available medical dataset such as:
 
 ### Workflow Distribution:
 
-* **Data pipeline:** preprocessing, cleaning, formatting
-* **Modeling:** baseline + VLM experiments
-* **Evaluation:** metrics (BLEU, ROUGE, accuracy for VQA)
-* **System:** demo + reporting
+* **Data pipeline:** Normalizing medical images and formatting prompts with `<think>/<answer>` tags.
+* **Modeling:** Training a 3B-parameter model using RL to outperform much larger models through efficient reasoning.
+* **Evaluation:** Using **IoU** for spatial accuracy, **BLEU/ROUGE**for reports, and **Greedy Precision** to check for "reward hacking".
+* **System:** A demo interface showing the clinical rationale and corresponding visual evidence.
 
 Roles are distributed to ensure balanced contribution across the pipeline.
 
 ---
 
-## 📂 Repository Structure (for GitHub)
+## 🔗 GitHub Repository
 
-```
-/project-root
-│── proposal.md
-│── /data
-│   ├── dataset files
-│   └── README.md
-│── /src
-│── /notebooks
-```
-
----
-
-## 📌 Notes
-
-* The repository will be kept **private**
-* Collaborators will include:
-
-  * Dr Mo El-Haj (drelhaj)
-  * Mr Nguyen Huy Hung (whistle-hikhi)
+*https://github.com/cnvcuong/VinUni_Spring26_NLP_COMP5040_FinalProject_Group1*
 
 ---
