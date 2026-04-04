@@ -2,7 +2,10 @@
 
 # 📁 Dataset Description
 
-## 🧠 Overview
+## Overview
+
+This directory contains datasets used for training and evaluating a **Vision-Language Model (VLM)** enhanced with **Reinforcement Learning (RL)** for medical reasoning and visual grounding.
+
 The dataset supports multiple multimodal tasks, including:
 
 * Medical report generation
