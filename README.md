@@ -13,7 +13,9 @@ Maximum Marginal Relevance (MMR) selection to reduce redundancy in the output
 summary.
 
 **Live demo:** https://nlp-final-project.streamlit.app
+
 **Application source code:** https://github.com/Tointech/NLP-Project
+
 **Project repository (report + code + data):** https://github.com/cnvcuong/VinUni_Spring26_NLP_COMP5040_FinalProject_Group1
 
 ---
