@@ -33,7 +33,7 @@ summary.
 
 ★ Proposed method. Best grid-search configuration (λ=0.6, τ=0.05, α=0.7): ROUGE-L = **0.3140**.
 
----
+
 
 ## Repository Structure
 
@@ -168,8 +168,8 @@ MMR(c) = λ × LexRank(c) − (1 − λ) × max_sim(c, s),   s ∈ S
 |---|---|
 | **ROUGE-1/2/L F1** | Lexical overlap (unigram / bigram / LCS) with reference summaries |
 | **BERTScore F1** | Semantic overlap using `bert-base-multilingual-cased` soft token alignment |
-| **Redundancy** | Average pairwise cosine similarity among selected sentences — lower is better |
-| **SrcCover** | Fraction of source articles contributing at least one selected sentence — higher means broader coverage |
+| **Redundancy** | Average pairwise cosine similarity among selected sentences, lower is better |
+| **SrcCover** | Fraction of source articles contributing at least one selected sentence, higher means broader coverage |
 
 ---
 
